@@ -1,4 +1,11 @@
-<title>Звёздный дрейф</title>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Free flight through a procedural star system in your browser: a ringed gas giant, an orbital station, a nebula, a comet and a ray-traced black hole.">
+<meta name="theme-color" content="#03040a">
+<title>Stellar Drift</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,9 +26,9 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html,body{height:100%}
+html,body{height:100%;overscroll-behavior:none}
 body{margin:0;background:var(--void);color:var(--star);font-family:var(--f-mono);font-size:14px;overflow:hidden;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
-#c{position:fixed;inset:0;width:100vw;height:100vh;display:block;touch-action:none;outline:none}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none}
 
 .screen{position:fixed;inset:0;display:flex;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
@@ -69,15 +76,22 @@ kbd{font-family:var(--f-mono);font-size:11px;color:var(--star);border:1px solid 
 
 #hud{position:fixed;inset:0;pointer-events:none;z-index:10;transition:opacity .6s ease}
 #hud.off{opacity:0}
-#place{position:absolute;left:calc(env(safe-area-inset-left,0px) + 22px);top:calc(env(safe-area-inset-top,0px) + 20px);opacity:0;transition:opacity 1.4s ease;max-width:calc(100vw - 110px)}
+#place{position:absolute;left:calc(env(safe-area-inset-left,0px) + 22px);top:calc(env(safe-area-inset-top,0px) + 20px);opacity:0;transition:opacity 1.4s ease;max-width:calc(100vw - 230px)}
 #place.on{opacity:1}
 #placeName{display:block;font-family:var(--f-display);font-weight:700;font-size:clamp(17px,2.3vw,27px);letter-spacing:.06em;text-transform:uppercase;text-shadow:0 0 18px rgba(0,0,0,.6)}
 #placeSub{display:block;color:var(--dim);font-size:12px;margin-top:6px;letter-spacing:.03em;line-height:1.5;text-shadow:0 0 10px rgba(0,0,0,.8)}
-.hbtn{pointer-events:auto;font:inherit;color:var(--star);background:var(--glass);border:1px solid var(--hair);cursor:pointer;
+.hbtn{pointer-events:auto;touch-action:manipulation;font:inherit;color:var(--star);background:var(--glass);border:1px solid var(--hair);cursor:pointer;
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .hbtn:hover{border-color:rgba(255,176,84,.6)}
-#menuBtn{position:absolute;right:calc(env(safe-area-inset-right,0px) + 16px);top:calc(env(safe-area-inset-top,0px) + 16px);width:42px;height:42px;font-size:18px;line-height:1}
-#vp{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);display:flex;gap:6px;max-width:calc(100vw - 32px);flex-wrap:wrap;justify-content:center}
+#tools{position:absolute;right:calc(env(safe-area-inset-right,0px) + 16px);top:calc(env(safe-area-inset-top,0px) + 16px);display:flex;gap:8px}
+#tools .hbtn{height:42px;min-width:42px;padding:0 12px;font-size:12px;letter-spacing:.08em;line-height:1}
+#menuBtn{font-size:18px!important}
+#soundBtn{font-size:16px!important}
+#soundBtn.off{opacity:.5;text-decoration:line-through}
+#tourBtn.on{border-color:var(--amber);color:var(--amber)}
+.go,.seg button{touch-action:manipulation}
+.fatal{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:60;margin:0;background:rgba(40,10,8,.94);border:1px solid #ff8f7a;color:#ffd9d0;padding:14px 16px;font:12px/1.5 var(--f-mono);white-space:pre-wrap;max-height:50vh;overflow:auto;user-select:text;-webkit-user-select:text}
+#vp{position:absolute;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;pointer-events:none}
 #vp button{padding:7px 10px;font-size:11px;letter-spacing:.06em;display:flex;gap:7px;align-items:center}
 #vp button i{font-style:normal;color:var(--amber)}
 #vp button.cur{border-color:var(--amber)}
@@ -87,7 +101,7 @@ kbd{font-family:var(--f-mono);font-size:11px;color:var(--star);border:1px solid 
 #bh b{font-weight:600;color:var(--star)}
 #stats{position:absolute;left:calc(env(safe-area-inset-left,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 70px);font-size:11px;line-height:1.7;color:var(--dim);
   background:var(--glass);padding:10px 12px;border:1px solid var(--hair);font-variant-numeric:tabular-nums;white-space:pre;margin:0;font-family:var(--f-mono)}
-#hint{position:absolute;left:50%;top:60%;transform:translateX(-50%);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);transition:opacity .8s ease;text-align:center;width:max-content;max-width:calc(100vw - 32px);text-shadow:0 0 8px #000}
+#hint{position:absolute;left:50%;top:60%;transform:translateX(-50%);text-wrap:balance;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);transition:opacity .8s ease;text-align:center;width:max-content;max-width:calc(100vw - 32px);text-shadow:0 0 8px #000}
 #hint.gone{opacity:0}
 #ret{position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;opacity:.35}
 #ret::before,#ret::after{content:"";position:absolute;background:var(--star)}
@@ -109,7 +123,9 @@ kbd{font-family:var(--f-mono);font-size:11px;color:var(--star);border:1px solid 
   #touch{display:block}
   .keys.desk-only{display:none}
   .keys.touch-only{display:grid}
-  #ret,#hint{display:none}
+  #ret{display:none}
+  #hint{letter-spacing:.12em}
+  #vp button{min-width:40px;justify-content:center;padding:9px 10px}
   #bh{bottom:calc(env(safe-area-inset-bottom,0px) + 210px)}
   #stats{bottom:calc(env(safe-area-inset-bottom,0px) + 210px)}
 }
@@ -119,47 +135,50 @@ kbd{font-family:var(--f-mono);font-size:11px;color:var(--star);border:1px solid 
   .panel{margin-left:0}
 }
 @media (max-width:420px){ .keys{grid-template-columns:1fr} }
+@media (max-width:560px){ #place{top:calc(env(safe-area-inset-top,0px) + 70px);max-width:calc(100vw - 44px)} #placeSub{font-size:11px} }
 @media (max-height:560px){ .lede,.foot{display:none} .panel{gap:12px} }
 @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
 </style>
+</head>
+<body>
 
-<canvas id="c" tabindex="0" aria-label="Трёхмерная сцена: система Эльсвет"></canvas>
+<canvas id="c" tabindex="0" aria-label="3D scene: the Elsvet system"></canvas>
 
 <div id="loader" class="screen">
-  <h1 class="logo">Звёздный<em>дрейф</em></h1>
+  <h1 class="logo">Stellar<em>Drift</em></h1>
   <div class="bar"><i id="bar"></i></div>
-  <p class="status" id="status">Зажигаем звёзды…</p>
+  <p class="status" id="status">Lighting the stars…</p>
 </div>
 
 <div id="menu" class="screen" hidden>
   <div class="panel">
-    <p class="eyebrow">Система Эльсвет · 7 объектов</p>
-    <h1 class="logo">Звёздный<em>дрейф</em></h1>
-    <p class="lede">Свободный полёт по процедурной звёздной системе: газовый гигант с ледяными кольцами, орбитальная станция, эмиссионная туманность, комета и чёрная дыра, которая искривляет свет вокруг себя.</p>
-    <button class="go" id="go"><span>В полёт</span><span>↵</span></button>
-    <div class="seg" role="radiogroup" aria-label="Детализация">
-      <span>Детали</span>
-      <button id="q-low" data-q="low" role="radio" aria-checked="false">Низкая</button>
-      <button id="q-med" data-q="med" role="radio" aria-checked="false">Средняя</button>
-      <button id="q-high" data-q="high" role="radio" aria-checked="false">Высокая</button>
+    <p class="eyebrow">Elsvet system · 7 bodies</p>
+    <h1 class="logo">Stellar<em>Drift</em></h1>
+    <p class="lede">Free flight through a procedural star system: a gas giant with icy rings, an orbital station, an emission nebula, a comet, and a black hole that bends light around itself.</p>
+    <button class="go" id="go"><span>Fly</span><span>↵</span></button>
+    <div class="seg" role="radiogroup" aria-label="Detail level">
+      <span>Detail</span>
+      <button id="q-low" data-q="low" role="radio" aria-checked="false">Low</button>
+      <button id="q-med" data-q="med" role="radio" aria-checked="false">Medium</button>
+      <button id="q-high" data-q="high" role="radio" aria-checked="false">High</button>
     </div>
     <div class="keys desk-only">
-      <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><b>полёт</b></div>
-      <div><kbd>Esc</kbd><b>меню</b></div>
-      <div><kbd>Q</kbd><kbd>E</kbd><b>вниз / вверх</b></div>
-      <div><kbd>M</kbd><b>звук</b></div>
-      <div><kbd>Shift</kbd><b>форсаж</b></div>
-      <div><kbd>H</kbd><b>телеметрия</b></div>
-      <div><kbd>1</kbd>–<kbd>6</kbd><b>точки обзора</b></div>
-      <div><kbd>T</kbd><b>автотур</b></div>
+      <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><b>fly</b></div>
+      <div><kbd>Esc</kbd><b>menu</b></div>
+      <div><kbd>Q</kbd><kbd>E</kbd><b>down / up</b></div>
+      <div><kbd>M</kbd><b>sound</b></div>
+      <div><kbd>Shift</kbd><b>boost</b></div>
+      <div><kbd>H</kbd><b>telemetry</b></div>
+      <div><kbd>1</kbd>–<kbd>6</kbd><b>viewpoints</b></div>
+      <div><kbd>T</kbd><b>auto tour</b></div>
     </div>
     <div class="keys touch-only">
-      <div><b>Левый круг — полёт</b></div>
-      <div><b>Свайп справа — обзор</b></div>
-      <div><b>▲ ▼ — вверх / вниз</b></div>
-      <div><b>Кнопки 1–6 — точки</b></div>
+      <div><b>Left pad: fly</b></div>
+      <div><b>Drag anywhere: look</b></div>
+      <div><b>▲ ▼: up / down</b></div>
+      <div><b>1–6: viewpoints</b></div>
     </div>
-    <p class="foot" id="foot">Всё, что вы видите, генерируется кодом прямо в браузере: ни одной текстуры или модели не загружается.</p>
+    <p class="foot" id="foot">Everything you see is generated by code in your browser. No textures or models are downloaded.</p>
   </div>
 </div>
 
@@ -167,19 +186,29 @@ kbd{font-family:var(--f-mono);font-size:11px;color:var(--star);border:1px solid 
   <div id="warp"></div>
   <div id="ret"></div>
   <div id="place"><span id="placeName"></span><span id="placeSub"></span></div>
-  <button class="hbtn" id="menuBtn" aria-label="Открыть меню">≡</button>
+  <div id="tools">
+    <button class="hbtn" id="tourBtn" aria-pressed="false">Tour</button>
+    <button class="hbtn" id="soundBtn" aria-label="Mute sound" aria-pressed="false">♪</button>
+    <button class="hbtn" id="menuBtn" aria-label="Open menu">≡</button>
+  </div>
   <div id="bh"></div>
   <pre id="stats" hidden></pre>
-  <div id="hint">Щёлкните по сцене, чтобы управлять мышью</div>
+  <div id="hint">Click the scene to steer with the mouse</div>
   <div id="vp"></div>
   <div id="touch">
     <div id="joy"><div id="knob"></div></div>
-    <button class="hbtn ud" id="upBtn" aria-label="Вверх">▲</button>
-    <button class="hbtn ud" id="downBtn" aria-label="Вниз">▼</button>
-    <button class="hbtn" id="boostBtn" aria-label="Форсаж">ФОРС</button>
+    <button class="hbtn ud" id="upBtn" aria-label="Up">▲</button>
+    <button class="hbtn ud" id="downBtn" aria-label="Down">▼</button>
+    <button class="hbtn" id="boostBtn" aria-label="Boost">BOOST</button>
   </div>
 </div>
 
+<script>
+  // If the 3D engine cannot be downloaded, say so instead of waiting forever.
+  setTimeout(function(){ if (window.__booted) return; var s = document.getElementById('status');
+    if (s) s.textContent = 'Could not load the 3D engine from cdn.jsdelivr.net. Check the connection and reload.'; }, 25000);
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/es-module-shims@1.8.3/dist/es-module-shims.js"></script>
 <script type="importmap">
 {"imports":{
   "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -275,23 +304,41 @@ const W = {
   planetR: 320, rin: 420, rout: 760,
   station: new THREE.Vector3(1020, 150, 780),
   nebula: new THREE.Vector3(3500, 650, 3900),
-  bh: new THREE.Vector3(-3700, -260, 4300), rs: 26, lensR: 34,
+  bh: new THREE.Vector3(-3700, -260, 4300), rs: 26, lensR: 44,
   cometC: new THREE.Vector3(-1500, 500, -600), cometR: 2300,
 };
 const U = { time: { value: 0 } };
 
 const canvas = document.getElementById('c');
 const $ = id => document.getElementById(id);
-function fail(msg){ $('status').outerHTML = `<p class="err">${msg}</p>`; $('bar').parentNode.remove(); }
+window.__booted = true;
+function showError(msg){
+  let el = document.getElementById('fatal');
+  if (!el){ el = document.createElement('pre'); el.id = 'fatal'; el.className = 'fatal'; document.body.appendChild(el); }
+  el.textContent = String(msg);
+}
+function fail(msg){ const st = $('status'); if (st) st.textContent = 'Something went wrong'; showError(msg); }
+addEventListener('error', e => { if (e.message) showError('Error: ' + e.message); });
+addEventListener('unhandledrejection', e => showError('Error: ' + ((e.reason && e.reason.message) || e.reason)));
 
 let renderer;
 try {
   renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
   if (!renderer.capabilities.isWebGL2) throw new Error('webgl2');
 } catch (e) {
-  fail('Браузер не дал доступ к WebGL 2. Обновите браузер или включите аппаратное ускорение в настройках.');
+  fail('This browser did not provide WebGL 2. Update it, or turn on hardware acceleration in its settings.');
   throw e;
 }
+const isTouch = matchMedia('(pointer: coarse)').matches;
+// Some phones cannot render into half-float targets: fall back to 8-bit buffers instead of failing.
+const floatOK = renderer.extensions.has('EXT_color_buffer_float') || renderer.extensions.has('EXT_color_buffer_half_float');
+const RT_TYPE = floatOK ? THREE.HalfFloatType : THREE.UnsignedByteType;
+const NEB_GAIN = floatOK ? 1 : 8;
+renderer.debug.onShaderError = (gl, program, vs, fs) => {
+  const log = [gl.getProgramInfoLog(program), gl.getShaderInfoLog(vs), gl.getShaderInfoLog(fs)].filter(Boolean).join('\n').trim();
+  showError('A shader failed to compile on this device:\n' + log.slice(0, 1500));
+};
+canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); showError('The graphics context was lost (on phones this usually means low memory). Reload the page and choose Low detail.'); });
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
 renderer.setSize(innerWidth, innerHeight, false);
@@ -341,13 +388,13 @@ vec3 skyStars(vec3 d){
   return starLayer(d,120.0,dens,0.17)*(0.7+band)+starLayer(d,270.0,dens*1.5,0.24)*0.5;
 }`;
 
-const nebCube = new THREE.WebGLCubeRenderTarget(512, { type: THREE.HalfFloatType, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter });
+const nebCube = new THREE.WebGLCubeRenderTarget(512, { type: RT_TYPE, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter });
 function bakeSky(){
   const s = new THREE.Scene();
   const m = new THREE.Mesh(new THREE.SphereGeometry(100, 64, 32), new THREE.ShaderMaterial({
     side: THREE.BackSide, depthWrite: false,
     vertexShader: `varying vec3 vDir; void main(){ vDir=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-    fragmentShader: GLSL_SKY_NEB + `varying vec3 vDir; void main(){ gl_FragColor=vec4(nebulaColor(normalize(vDir)),1.0); }`
+    fragmentShader: GLSL_SKY_NEB + `varying vec3 vDir; void main(){ gl_FragColor=vec4(nebulaColor(normalize(vDir))*${NEB_GAIN.toFixed(1)},1.0); }`
   }));
   s.add(m);
   const cc = new THREE.CubeCamera(1, 1000, nebCube);
@@ -358,11 +405,11 @@ function bakeSky(){
 }
 
 const skyDome = new THREE.Mesh(new THREE.SphereGeometry(12000, 48, 24), new THREE.ShaderMaterial({
-  uniforms: { uNeb: { value: nebCube.texture } },
+  uniforms: { uNeb: { value: nebCube.texture }, uNebK: { value: 1 / NEB_GAIN } },
   side: THREE.BackSide, depthWrite: false, depthTest: false,
   vertexShader: `varying vec3 vDir; void main(){ vDir=position; vec4 p=projectionMatrix*modelViewMatrix*vec4(position,1.0); gl_Position=p.xyww; }`,
-  fragmentShader: GLSL_STARS + `uniform samplerCube uNeb; varying vec3 vDir;
-    void main(){ vec3 d=normalize(vDir); gl_FragColor=vec4(textureCube(uNeb,d).rgb+skyStars(d),1.0); }`
+  fragmentShader: GLSL_STARS + `uniform samplerCube uNeb; uniform float uNebK; varying vec3 vDir;
+    void main(){ vec3 d=normalize(vDir); gl_FragColor=vec4(textureCube(uNeb,d).rgb*uNebK+skyStars(d),1.0); }`
 }));
 skyDome.renderOrder = -10; skyDome.frustumCulled = false;
 scene.add(skyDome);
@@ -407,7 +454,7 @@ function makeBrightStars(n){
 const brightStars = makeBrightStars(2600);
 scene.add(brightStars);
 
-/* ================= Sun (Эльсвет) ================= */
+/* ================= Sun (Elsvet) ================= */
 const sunGroup = new THREE.Group(); sunGroup.position.copy(W.sun); scene.add(sunGroup);
 const sunMat = new THREE.ShaderMaterial({
   uniforms: { uTime: U.time },
@@ -444,7 +491,7 @@ const sunLight = new THREE.DirectionalLight(0xfff0dc, 3.2);
 sunLight.position.copy(W.sun); scene.add(sunLight);
 scene.add(new THREE.AmbientLight(0x8090c0, 0.05));
 
-/* ================= Gas giant Морвен + rings ================= */
+/* ================= Gas giant Morven + rings ================= */
 const planetSys = new THREE.Group();
 planetSys.rotation.set(0.12, 0, 0.42);
 scene.add(planetSys);
@@ -625,7 +672,7 @@ function buildChunks(){
   });
 }
 
-/* ================= Moons Кай and Тэа ================= */
+/* ================= Moons Kai and Thea ================= */
 function moonTexture(w, h, palette, seed, craters, icy){
   const lo = document.createElement('canvas'); lo.width = 256; lo.height = 128;
   const lx = lo.getContext('2d'); const img = lx.createImageData(256,128);
@@ -685,7 +732,7 @@ function updateMoons(t){
   }
 }
 
-/* ================= Station «Перигей» ================= */
+/* ================= Perigee Station ================= */
 const navLights = [];
 const station = new THREE.Group();
 let stationSpin;
@@ -771,7 +818,7 @@ const glowPointsMat = (extraAlpha='1.0') => new THREE.ShaderMaterial({
       float a=max(exp(-r2*4.5)-0.011,0.0)*1.011*vA*${extraAlpha}; gl_FragColor=vec4(vC*a,1.0); }`
 });
 
-/* ================= Nebula «Ткач»: layered billboards ================= */
+/* ================= Weaver Nebula: layered billboards ================= */
 function cloudTexture(){
   const S=256, cv=document.createElement('canvas'); cv.width=cv.height=S;
   const x=cv.getContext('2d'), img=x.createImageData(S,S);
@@ -857,41 +904,58 @@ function buildNebula(){
   scene.add(pts);
 }
 
-/* ================= Black hole «Ахерон»: ray-marched Schwarzschild lens ================= */
+/* ================= Black hole Acheron: ray-marched Schwarzschild lens ================= */
 const bhGroup = new THREE.Group(); bhGroup.position.copy(W.bh); bhGroup.rotation.set(0.2, 0.5, -0.14); scene.add(bhGroup);
 bhGroup.updateMatrixWorld(true);
 const bhRotW2L = new THREE.Matrix3().setFromMatrix4(bhGroup.matrixWorld).transpose();
 const bhCamL = new THREE.Vector3();
 const bhMat = new THREE.ShaderMaterial({
-  uniforms: { uTime: U.time, uNeb: { value: nebCube.texture }, uCamL: { value: bhCamL }, uRot: { value: bhRotW2L },
-    uR: { value: W.lensR }, uSteps: { value: 160 } },
+  uniforms: { uTime: U.time, uNeb: { value: nebCube.texture }, uNebK: { value: 1 / NEB_GAIN }, uCamL: { value: bhCamL }, uRot: { value: bhRotW2L },
+    uR: { value: W.lensR }, uSteps: { value: 200 } },
   side: THREE.BackSide, transparent: true, depthWrite: false,
   vertexShader: `varying vec3 vWorld; void main(){ vec4 w=modelMatrix*vec4(position,1.0); vWorld=w.xyz; gl_Position=projectionMatrix*viewMatrix*w; }`,
   fragmentShader: GLSL_NOISE + GLSL_STARS + /* glsl */`
-    uniform samplerCube uNeb; uniform vec3 uCamL; uniform mat3 uRot; uniform float uTime,uR; uniform int uSteps;
+    // Units: Schwarzschild radius rs = 1, so the mass is M = 1/2. The disk lies in the local y = 0 plane
+    // and orbits in the +phi direction (velocity along (-z, 0, x)).
+    uniform samplerCube uNeb; uniform float uNebK; uniform vec3 uCamL; uniform mat3 uRot; uniform float uTime,uR; uniform int uSteps;
     varying vec3 vWorld;
-    vec3 bb(float t){
-      vec3 c=mix(vec3(1.0,0.22,0.04),vec3(1.0,0.52,0.16),smoothstep(0.25,0.55,t));
-      c=mix(c,vec3(1.0,0.86,0.68),smoothstep(0.55,1.05,t));
-      return mix(c,vec3(0.72,0.84,1.0),smoothstep(1.15,1.9,t));
+    const float RIN = 3.0;      // innermost stable circular orbit, 3 rs
+    const float ROUT = 15.0;
+    const float TMAX = 6500.0;  // peak emitted temperature, K
+
+    // Planckian locus fit (Helland), returned in linear RGB with the brightest channel at 1
+    vec3 blackbody(float T){
+      T=clamp(T,1000.0,40000.0)/100.0;
+      vec3 c;
+      c.r= T<=66.0 ? 1.0 : clamp(1.29293618606*pow(T-60.0,-0.1332047592),0.0,1.0);
+      c.g= T<=66.0 ? clamp(0.39008157876*log(T)-0.63184144378,0.0,1.0) : clamp(1.12989086089*pow(T-60.0,-0.0755148492),0.0,1.0);
+      c.b= T>=66.0 ? 1.0 : (T<=19.0 ? 0.0 : clamp(0.54320678911*log(T-10.0)-1.19625408914,0.0,1.0));
+      return pow(c,vec3(2.2));
     }
-    vec4 disk(vec3 p, vec3 dir){
+    // Thin-disk (Novikov-Thorne / Shakura-Sunyaev) temperature: T ~ r^-3/4 (1 - sqrt(r_in/r))^1/4,
+    // zero at the ISCO, peaking near r = 4.1 rs. Normalised so the peak is 1.
+    float diskT(float r){ return pow(r,-0.75)*pow(max(1.0-sqrt(RIN/r),0.0),0.25)/0.2140; }
+
+    // Lz: the photon's angular momentum about the disk's spin axis (conserved along the ray).
+    // Redshift factor for gas on a circular Kepler orbit, combining Doppler shift, transverse
+    // time dilation and gravitational redshift: g = sqrt(1 - 3M/r) / (1 - Omega * Lz).
+    vec4 disk(vec3 p, float Lz, float gObs){
       float r=length(p.xz);
-      float ph=atan(p.z,p.x)+uTime*1.4*pow(r,-1.5);
-      vec3 q=vec3(r*1.7,cos(ph)*2.4,sin(ph)*2.4);
-      float n=fbm3(q)*0.5+0.5;
-      float n2=snoise(vec3(r*7.0,cos(ph)*6.0,sin(ph)*6.0));
-      float dens=smoothstep(2.6,3.3,r)*(1.0-smoothstep(8.5,12.5,r));
-      dens*=clamp(0.35+0.85*n+0.18*n2,0.0,1.4);
-      float T=pow(r/2.6,-0.75);
-      float beta=clamp(sqrt(0.5/(r-1.0)),0.0,0.72);
-      vec3 vdir=normalize(vec3(-p.z,0.0,p.x));
-      float D=1.0/((1.0/sqrt(1.0-beta*beta))*(1.0-beta*dot(vdir,-dir)));
-      float shift=D*sqrt(max(1.0-1.0/r,0.05));
-      float I=pow(shift,3.0);
-      vec3 c=bb(T*shift)*2.2*T*T*I;
-      return vec4(c,clamp(dens*0.95,0.0,0.97));
+      float Om=sqrt(0.5/(r*r*r));
+      float g=gObs*sqrt(max(1.0-1.5/r,1e-4))/(1.0-Om*Lz);
+      float tn=diskT(r);
+      float ph=atan(p.z,p.x)-uTime*1.5*pow(r,-1.5);       // pattern sheared by differential rotation
+      vec2 cs=vec2(cos(ph),sin(ph));
+      float n=fbm3(vec3(cs*2.6,r*0.9))*0.5+0.5;
+      float st=snoise(vec3(cs*7.0,r*5.0))*0.5+0.5;
+      float tex=mix(0.5,1.4,n)*mix(0.82,1.12,st);
+      float edge=smoothstep(RIN,RIN+0.25,r)*(1.0-smoothstep(ROUT*0.6,ROUT,r));
+      float I=1.0*pow(g,4.0)*pow(tn,4.0)*tex;              // bolometric intensity scales as g^4
+      return vec4(blackbody(TMAX*tn*g)*I, edge*clamp(0.82+0.3*n,0.0,1.0));   // optically thick
     }
+    // Photon orbit in Schwarzschild geometry written as a central force: a = -3/2 h^2 x / r^5
+    vec3 acc(vec3 p,float h2){ float r2=dot(p,p); return -1.5*h2*p/(r2*r2*sqrt(r2)); }
+
     void main(){
       vec3 dirW=normalize(vWorld-cameraPosition);
       vec3 d=uRot*dirW; vec3 o=uCamL; float R=uR;
@@ -900,36 +964,43 @@ const bhMat = new THREE.ShaderMaterial({
         float bq=dot(o,d), disc=bq*bq-(oo-R*R);
         if(disc<=0.0) discard;
         pos=o+d*max(-bq-sqrt(disc),0.0);
-        w=smoothstep(R*0.7,R*0.985,length(cross(o,d)));
+        w=smoothstep(R*0.72,R*0.99,length(cross(o,d)));   // fade into the unlensed sky at the lens edge
       }
+      // A static observer deep in the well sees infalling light blueshifted
+      float gObs=1.0/sqrt(max(1.0-1.0/max(sqrt(oo),1.01),0.01));
       vec3 vel=d; vec3 hv=cross(pos,vel); float h2=dot(hv,hv);
+      float Lz=hv.y;
       vec3 col=vec3(0.0); float trans=1.0; bool cap=false;
-      for(int i=0;i<400;i++){
+      vec3 a=acc(pos,h2);
+      for(int i=0;i<480;i++){
         if(i>=uSteps) break;
-        float r2=dot(pos,pos), r=sqrt(r2);
+        float r=length(pos);
         if(r<1.0){cap=true;break;}
-        float dt=clamp(0.07*r,0.022,1.0);
+        float dt=clamp(0.05*r*r/(r+2.0),0.012,1.2);       // fine steps near the photon sphere (r = 1.5)
         vec3 prev=pos;
-        vel+=-1.5*h2*pos/(r2*r2*r)*dt;
-        pos+=vel*dt;
+        vel+=0.5*dt*a; pos+=vel*dt; a=acc(pos,h2); vel+=0.5*dt*a;   // velocity Verlet
         if(prev.y*pos.y<0.0){
           float t=prev.y/(prev.y-pos.y); vec3 p=mix(prev,pos,t); float pr=length(p.xz);
-          if(pr>2.5&&pr<12.8){ vec4 dc=disk(p,normalize(vel)); col+=trans*dc.rgb*dc.a; trans*=1.0-dc.a; if(trans<0.02) break; }
+          if(pr>RIN&&pr<ROUT){ vec4 dc=disk(p,Lz,gObs); col+=trans*dc.rgb*dc.a; trans*=1.0-dc.a; if(trans<0.01) break; }
         }
         if(r>R&&dot(pos,vel)>0.0) break;
       }
-      if(!cap&&trans>0.02){ vec3 dw=transpose(uRot)*normalize(vel); col+=trans*(textureCube(uNeb,dw).rgb+skyStars(dw)); }
+      if(!cap&&trans>0.01){
+        vec3 dw=transpose(uRot)*normalize(vel);
+        // explicit LOD: after the divergent loop, implicit derivatives are undefined and pick a blurred, dark mip
+        col+=trans*(textureLod(uNeb,dw,0.0).rgb*uNebK+skyStars(dw))*min(gObs*gObs*gObs,3.0);
+      }
       gl_FragColor=vec4(col,1.0-w);
     }`
 });
-const bhMesh = new THREE.Mesh(new THREE.SphereGeometry(W.rs*W.lensR, 64, 32), bhMat);
+const bhMesh = new THREE.Mesh(new THREE.SphereGeometry(W.rs*W.lensR, 96, 48), bhMat);
 bhMesh.renderOrder = 8;
 bhGroup.add(bhMesh);
 function updateBH(){
   bhCamL.copy(camera.position).sub(W.bh).applyMatrix3(bhRotW2L).divideScalar(W.rs);
 }
 
-/* ================= Comet «Ива» ================= */
+/* ================= Comet Iva ================= */
 const comet = { pos:new THREE.Vector3(), prev:new THREE.Vector3(), vel:new THREE.Vector3(), group:new THREE.Group(), tails:[] };
 const COMET_U = new THREE.Vector3(1,0,0.15).normalize();
 const COMET_V = new THREE.Vector3(0,0.38,1).normalize().sub(COMET_U.clone().multiplyScalar(COMET_U.dot(new THREE.Vector3(0,0.38,1).normalize()))).normalize();
@@ -1016,10 +1087,11 @@ const dustPts = (()=>{
 })();
 
 /* ================= Post: bloom + film pass ================= */
-const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(innerWidth, innerHeight, { type: THREE.HalfFloatType, samples: 4 }));
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(innerWidth, innerHeight, { type: RT_TYPE, samples: isTouch ? 0 : 4 }));
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.8, 0.6, 0.95);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.65, 0.45, 1.0);
 composer.addPass(bloom);
+if (!floatOK) bloom.enabled = false;
 composer.addPass(new OutputPass());
 const film = new ShaderPass({
   uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uWarp: { value: 0 } },
@@ -1036,11 +1108,10 @@ composer.addPass(film);
 
 /* ================= Quality ================= */
 const QUALITY = {
-  low:  { pr: 0.75, steps: 90,  chunks: 2400, neb: 220, dust: 900 },
-  med:  { pr: 1.0,  steps: 150, chunks: 4800, neb: 340, dust: 1600 },
-  high: { pr: 1.5,  steps: 240, chunks: 7200, neb: 460, dust: 2200 },
+  low:  { pr: isTouch ? 1.0 : 0.75, steps: 130, chunks: 2400, neb: 220, dust: 900 },
+  med:  { pr: 1.0,  steps: 220, chunks: 4800, neb: 340, dust: 1600 },
+  high: { pr: 1.5,  steps: 340, chunks: 7200, neb: 460, dust: 2200 },
 };
-const isTouch = matchMedia('(pointer: coarse)').matches;
 let quality = isTouch ? 'low' : 'med';
 try { const s = localStorage.getItem('drift-quality'); if (QUALITY[s]) quality = s; } catch (e) {}
 function resize(){
@@ -1053,10 +1124,14 @@ function updatePointScale(){
   PU.uScale.value = innerHeight * renderer.getPixelRatio() / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2));
   brightStars.material.uniforms.uPR.value = renderer.getPixelRatio();
 }
+let prScale = 1;   // lowered automatically when the frame rate stays under ~27 fps
+function applyPixelRatio(){
+  const pr = Math.min(devicePixelRatio || 1, QUALITY[quality].pr) * prScale;
+  renderer.setPixelRatio(pr); composer.setPixelRatio(pr); resize();
+}
 function applyQuality(k){
   quality = k; const q = QUALITY[k];
-  const pr = Math.min(devicePixelRatio || 1, q.pr);
-  renderer.setPixelRatio(pr); composer.setPixelRatio(pr);
+  prScale = 1; applyPixelRatio();
   bhMat.uniforms.uSteps.value = q.steps;
   chunkMeshes.forEach(m => m.count = Math.floor(q.chunks / 3));
   if (nebulaMesh) nebulaMesh.geometry.instanceCount = q.neb;
@@ -1069,21 +1144,21 @@ addEventListener('resize', resize);
 
 /* ================= Viewpoints & named places ================= */
 const ORIGIN = new THREE.Vector3();
-const SUN_AZ = Math.atan2(W.sun.z, W.sun.x);   // azimuth of the star seen from Морвен
+const SUN_AZ = Math.atan2(W.sun.z, W.sun.x);   // azimuth of the star seen from Morven
 const UP = new THREE.Vector3(0, 1, 0);
 const VIEWS = [
-  { name: 'Морвен', get(){ const a = SUN_AZ + 0.85; return { pos: new THREE.Vector3(Math.cos(a)*1750, 480, Math.sin(a)*1750), look: new THREE.Vector3(0, -30, 0) }; } },
-  { name: 'Кольца', get(){
+  { name: 'Morven', get(){ const a = SUN_AZ + 0.85; return { pos: new THREE.Vector3(Math.cos(a)*1750, 480, Math.sin(a)*1750), look: new THREE.Vector3(0, -30, 0) }; } },
+  { name: 'Rings', get(){
       ringSpin.updateMatrixWorld(true);
       const a = VP2_ANGLE;
       return { pos: ringSpin.localToWorld(new THREE.Vector3(Math.cos(a)*600, 4, Math.sin(a)*600)),
                look: ringSpin.localToWorld(new THREE.Vector3(Math.cos(a+0.3)*520, -6, Math.sin(a+0.3)*520)) }; } },
-  { name: 'Перигей', get(){
+  { name: 'Perigee', get(){
       const out = W.station.clone().normalize();
       return { pos: W.station.clone().addScaledVector(out, 330).add(new THREE.Vector3(60, 90, 0)), look: W.station.clone().add(new THREE.Vector3(0, -10, 0)) }; } },
-  { name: 'Туманность', get(){ return { pos: W.nebula.clone().add(new THREE.Vector3(-1000, 160, -1250)), look: W.nebula.clone() }; } },
-  { name: 'Ахерон', get(){ return { pos: bhGroup.localToWorld(new THREE.Vector3(0, 2.1*W.rs, 23*W.rs)), look: W.bh.clone() }; } },
-  { name: 'Комета', get(dur = 5){
+  { name: 'Nebula', get(){ return { pos: W.nebula.clone().add(new THREE.Vector3(-1000, 160, -1250)), look: W.nebula.clone() }; } },
+  { name: 'Acheron', get(){ return { pos: bhGroup.localToWorld(new THREE.Vector3(0, 2.1*W.rs, 23*W.rs)), look: W.bh.clone() }; } },
+  { name: 'Comet', get(dur = 5){
       const p = cometAt(U.time.value + dur, new THREE.Vector3());
       const a = p.clone().sub(W.sun).normalize();
       const side = new THREE.Vector3().crossVectors(a, UP).normalize();
@@ -1091,16 +1166,16 @@ const VIEWS = [
 ];
 const kaiW = new THREE.Vector3(), theaW = new THREE.Vector3();
 const PLACES = [
-  { name: 'Станция «Перигей»', sub: 'Жилое кольцо вращается и создаёт на ободе искусственную силу тяжести', near: () => camera.position.distanceTo(W.station) < 450 },
-  { name: 'Комета Ивы', sub: 'Синий ионный хвост всегда смотрит от звезды, пылевой отстаёт и изгибается', near: () => camera.position.distanceTo(comet.pos) < 700 },
-  { name: 'Кай', sub: 'Спутник Морвена, всегда повёрнут к нему одной стороной', near: () => camera.position.distanceTo(kaiW) < 320 },
-  { name: 'Тэа', sub: 'Ледяной спутник, кора в трещинах от приливных сил', near: () => camera.position.distanceTo(theaW) < 240 },
-  { name: 'Кольца Морвена', sub: 'Ледяные глыбы от песчинок до сотен метров, слой толщиной в десятки', near: () => { const r = Math.hypot(camL.x, camL.z); return Math.abs(camL.y) < 45 && r > W.rin - 10 && r < W.rout + 10; } },
-  { name: 'Морвен', sub: 'Газовый гигант · 0,4 массы Юпитера · сутки 9 ч 48 мин', near: () => camera.position.length() < 1250 },
-  { name: 'Ахерон', sub: 'Чёрная дыра · 9 масс Солнца · радиус Шварцшильда ≈ 27 км', near: () => camera.position.distanceTo(W.bh) < W.rs * 42 },
-  { name: 'Туманность Ткача', sub: 'Область H II: розовое свечение даёт водород, бирюзовое — кислород', near: () => camera.position.distanceTo(W.nebula) < 1900 },
-  { name: 'Эльсвет', sub: 'Оранжевый карлик · 4900 K · центр системы', near: () => camera.position.distanceTo(W.sun) < 1600 },
-  { name: 'Система Эльсвет', sub: 'Открытый космос между мирами', near: () => true },
+  { name: 'Perigee Station', sub: 'The habitat ring spins to make artificial gravity at its rim', near: () => camera.position.distanceTo(W.station) < 450 },
+  { name: 'Comet Iva', sub: 'The blue ion tail always points away from the star; the dust tail lags and curves', near: () => camera.position.distanceTo(comet.pos) < 700 },
+  { name: 'Kai', sub: 'Moon of Morven, tidally locked with one face toward the planet', near: () => camera.position.distanceTo(kaiW) < 320 },
+  { name: 'Thea', sub: 'Icy moon, its crust cracked by tidal stress', near: () => camera.position.distanceTo(theaW) < 240 },
+  { name: 'Rings of Morven', sub: 'Ice from grains of sand to boulders hundreds of meters wide, in a sheet only tens of meters thick', near: () => { const r = Math.hypot(camL.x, camL.z); return Math.abs(camL.y) < 45 && r > W.rin - 10 && r < W.rout + 10; } },
+  { name: 'Morven', sub: 'Gas giant · 0.4 Jupiter masses · 9 h 48 min day', near: () => camera.position.length() < 1250 },
+  { name: 'Acheron', sub: 'Black hole · 9 solar masses · Schwarzschild radius ≈ 27 km', near: () => camera.position.distanceTo(W.bh) < W.rs * 48 },
+  { name: 'Weaver Nebula', sub: 'H II region: hydrogen glows pink, oxygen glows teal', near: () => camera.position.distanceTo(W.nebula) < 1900 },
+  { name: 'Elsvet', sub: 'Orange dwarf · 4,900 K · the system’s star', near: () => camera.position.distanceTo(W.sun) < 1600 },
+  { name: 'Elsvet system', sub: 'Open space between worlds', near: () => true },
 ];
 
 /* ================= Flight state ================= */
@@ -1120,7 +1195,7 @@ function setAnglesFromDir(dir){
 }
 const ease = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
 function flyTo(i, fromTour = false){
-  if (!fromTour) tour = null;
+  if (!fromTour && tour) stopTour();
   const p0 = camera.position.clone();
   let { pos, look: lk } = VIEWS[i].get();
   const dist = p0.distanceTo(pos);
@@ -1186,8 +1261,8 @@ function collide(){
     if (d < r){ _dir.normalize(); camera.position.copy(c).addScaledVector(_dir, r); const vn = vel.dot(_dir); if (vn < 0) vel.addScaledVector(_dir, -vn); }
   }
 }
-function startTour(){ tour = { i: 0, timer: 0 }; flyTo(0, true); $('hint').textContent = 'Автотур · нажмите любую клавишу движения, чтобы взять управление'; $('hint').classList.remove('gone'); }
-function stopTour(){ tour = null; $('hint').classList.add('gone'); }
+function startTour(){ tour = { i: 0, timer: 0 }; flyTo(0, true); $('tourBtn').classList.add('on'); $('tourBtn').setAttribute('aria-pressed', 'true'); $('hint').textContent = isTouch ? 'Auto tour · touch the pad to take control' : 'Auto tour · press any movement key to take control'; $('hint').classList.remove('gone'); }
+function stopTour(){ tour = null; $('hint').classList.add('gone'); $('tourBtn').classList.remove('on'); $('tourBtn').setAttribute('aria-pressed', 'false'); }
 function updateTour(dt){
   if (!tour || trans) return;
   tour.timer += dt;
@@ -1259,7 +1334,7 @@ const audio = new SpaceAudio();
 const menuEl = $('menu'), hudEl = $('hud');
 VIEWS.forEach((v, i) => {
   const b = document.createElement('button'); b.className = 'hbtn'; b.id = 'vp' + (i + 1);
-  b.innerHTML = `<i>${i + 1}</i><b>${v.name}</b>`; b.setAttribute('aria-label', `Точка обзора ${i + 1}: ${v.name}`);
+  b.innerHTML = `<i>${i + 1}</i><b>${v.name}</b>`; b.setAttribute('aria-label', `Viewpoint ${i + 1}: ${v.name}`);
   b.addEventListener('click', e => { e.stopPropagation(); if (mode === 'fly') flyTo(i); });
   $('vp').appendChild(b);
 });
@@ -1267,12 +1342,13 @@ document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click'
 
 function openMenu(){
   mode = 'menu'; menuEl.hidden = false; requestAnimationFrame(() => menuEl.classList.remove('out'));
-  hudEl.classList.add('off'); $('go').querySelector('span').textContent = 'Продолжить';
+  hudEl.classList.add('off'); $('go').querySelector('span').textContent = 'Resume';
   if (document.pointerLockElement) document.exitPointerLock();
   $('go').focus();
 }
 function closeMenu(){
-  if (introOrbit){ introOrbit = false; setAnglesFromDir(new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion)); roll = 0; }
+  if (introOrbit){ introOrbit = false; setAnglesFromDir(new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion)); roll = 0;
+    if (isTouch) flash('Drag anywhere to look · use the pad to fly', 5000); }
   mode = 'fly'; menuEl.classList.add('out'); setTimeout(() => { if (mode === 'fly') menuEl.hidden = true; }, 600);
   hudEl.hidden = false; hudEl.classList.remove('off');
   audio.start();
@@ -1286,9 +1362,17 @@ function tryLock(){
     if (p && p.catch) p.catch(() => { lockFailed = true; showDragHint(); });
   } catch (e) { lockFailed = true; showDragHint(); }
 }
-function showDragHint(){ $('hint').textContent = 'Зажмите кнопку мыши и ведите, чтобы осмотреться'; $('hint').classList.remove('gone'); setTimeout(() => $('hint').classList.add('gone'), 6000); }
+function showDragHint(){ $('hint').textContent = 'Hold the mouse button and drag to look around'; $('hint').classList.remove('gone'); setTimeout(() => $('hint').classList.add('gone'), 6000); }
 $('go').addEventListener('click', closeMenu);
 $('menuBtn').addEventListener('click', e => { e.stopPropagation(); openMenu(); });
+$('tourBtn').addEventListener('click', e => { e.stopPropagation(); tour ? stopTour() : startTour(); });
+$('soundBtn').addEventListener('click', e => { e.stopPropagation(); toggleMute(); });
+function toggleMute(){
+  audio.setMuted(!audio.muted);
+  const b = $('soundBtn'); b.classList.toggle('off', audio.muted); b.setAttribute('aria-pressed', String(audio.muted));
+  b.setAttribute('aria-label', audio.muted ? 'Unmute sound' : 'Mute sound');
+  flash(audio.muted ? 'Sound off' : 'Sound on');
+}
 document.addEventListener('pointerlockerror', () => { lockFailed = true; showDragHint(); });
 document.addEventListener('pointerlockchange', () => {
   const was = locked; locked = document.pointerLockElement === canvas;
@@ -1302,14 +1386,14 @@ addEventListener('keydown', e => {
   if (e.code === 'Escape'){ openMenu(); return; }
   keys.add(e.code);
   if (/^Digit[1-6]$/.test(e.code)) flyTo(+e.code.slice(5) - 1);
-  else if (e.code === 'KeyM'){ audio.setMuted(!audio.muted); flash(audio.muted ? 'Звук выключен' : 'Звук включён'); }
+  else if (e.code === 'KeyM') toggleMute();
   else if (e.code === 'KeyH'){ $('stats').hidden = !$('stats').hidden; }
   else if (e.code === 'KeyT'){ tour ? stopTour() : startTour(); }
   if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
 });
 addEventListener('keyup', e => keys.delete(e.code));
 addEventListener('blur', () => keys.clear());
-function flash(msg){ const h = $('hint'); h.textContent = msg; h.classList.remove('gone'); clearTimeout(flash.t); flash.t = setTimeout(() => h.classList.add('gone'), 1600); }
+function flash(msg, ms = 1600){ const h = $('hint'); h.textContent = msg; h.classList.remove('gone'); clearTimeout(flash.t); flash.t = setTimeout(() => h.classList.add('gone'), ms); }
 
 const SENS = 0.0021;
 canvas.addEventListener('mousedown', e => {
@@ -1356,7 +1440,7 @@ hold('boostBtn', () => touchBoost = true, () => touchBoost = false);
 
 /* ================= HUD ================= */
 let lastPlace = null, placeTimer = 0, hudTimer = 0;
-const fmt = (n, d = 0) => n.toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmt = (n, d = 0) => n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 function updateHud(dt, fps){
   hudTimer += dt; placeTimer += dt;
   if (hudTimer < 0.25) return; hudTimer = 0;
@@ -1368,21 +1452,28 @@ function updateHud(dt, fps){
   const r = camera.position.distanceTo(W.bh) / W.rs;
   const bh = $('bh');
   if (r < 40){
-    bh.innerHTML = `Ахерон<br>r = <b>${fmt(r, 1)}</b> Rₛ<br>до горизонта ≈ ${fmt((r - 1) * 27)} км<br>время идёт медленнее в <b>${fmt(1 / Math.sqrt(1 - 1 / r), 3)}</b> раза`;
+    const el = Math.asin(THREE.MathUtils.clamp(bhCamL.y / bhCamL.length(), -1, 1)) * 180 / Math.PI;
+    const view = Math.abs(el) > 80 ? 'face-on, looking ' + (el > 0 ? 'down' : 'up') + ' the spin axis' : Math.abs(el) < 2 ? 'edge-on to the disk' : `${fmt(Math.abs(el))}° ${el > 0 ? 'above' : 'below'} the disk`;
+    bh.innerHTML = `Acheron<br>r = <b>${fmt(r, 1)}</b> Rₛ<br>${fmt((r - 1) * 27)} km to the horizon<br>clocks run <b>${fmt(1 / Math.sqrt(1 - 1 / r), 3)}×</b> slower here<br>view: ${view}`;
     bh.classList.add('on');
   } else bh.classList.remove('on');
   if (!$('stats').hidden){
     const ri = renderer.info.render;
-    $('stats').textContent = `FPS         ${fmt(fps)}\nскорость    ${fmt(vel.length())} ед/с\nпозиция     ${fmt(camera.position.x)} ${fmt(camera.position.y)} ${fmt(camera.position.z)}\nтреугольники ${fmt(ri.triangles)}\nдетали      ${{ low: 'низкая', med: 'средняя', high: 'высокая' }[quality]}`;
+    $('stats').textContent = `FPS        ${fmt(fps)}\nspeed      ${fmt(vel.length())} u/s\nposition   ${fmt(camera.position.x)} ${fmt(camera.position.y)} ${fmt(camera.position.z)}\ntriangles  ${fmt(ri.triangles)}\nresolution ${fmt(renderer.getPixelRatio(), 2)}×\ndetail     ${{ low: 'low', med: 'medium', high: 'high' }[quality]}`;
   }
 }
 
 /* ================= Main loop ================= */
-let last = performance.now(), fpsT = 0, fpsN = 0, fps = 60;
+let last = performance.now(), fpsT = 0, fpsN = 0, fps = 60, perfT = 0, perfN = 0;
 const shake = new THREE.Vector3();
 function frame(now){
   requestAnimationFrame(frame);
-  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  const rawMs = now - last;
+  const dt = Math.min(0.05, rawMs / 1000); last = now;
+  if (rawMs < 250 && document.visibilityState === 'visible'){
+    perfT += rawMs / 1000; perfN++;
+    if (perfT > 2.5){ if (perfN / perfT < 27 && prScale > 0.45){ prScale *= 0.82; applyPixelRatio(); } perfT = 0; perfN = 0; }
+  } else { perfT = 0; perfN = 0; }
   fpsT += dt; fpsN++; if (fpsT > 0.5){ fps = fpsN / fpsT; fpsT = 0; fpsN = 0; }
   const t = (U.time.value += dt);
   camera.position.sub(shake); shake.set(0, 0, 0);
@@ -1417,13 +1508,13 @@ function frame(now){
 const nextFrame = () => new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
 async function boot(){
   const steps = [
-    ['Запекаем небо', bakeSky],
-    ['Собираем кольца', buildChunks],
-    ['Лепим спутники', buildMoons],
-    ['Стыкуем станцию', buildStation],
-    ['Разгоняем туманность', buildNebula],
-    ['Зажигаем комету', buildComet],
-    ['Компилируем шейдеры', () => { applyQuality(quality); menuOrbit(0); updateBH(); renderer.compile(scene, camera); composer.render(0.016); }],
+    ['Baking the sky', bakeSky],
+    ['Gathering the rings', buildChunks],
+    ['Shaping the moons', buildMoons],
+    ['Docking the station', buildStation],
+    ['Spinning up the nebula', buildNebula],
+    ['Lighting the comet', buildComet],
+    ['Compiling shaders', () => { applyQuality(quality); menuOrbit(0); updateBH(); renderer.compile(scene, camera); composer.render(0.016); }],
   ];
   for (let i = 0; i < steps.length; i++){
     $('status').textContent = steps[i][0] + '…';
@@ -1440,5 +1531,10 @@ async function boot(){
   $('go').focus();
   requestAnimationFrame(frame);
 }
-boot().catch(err => { console.error(err); fail('Не удалось построить сцену: ' + (err && err.message ? err.message : err)); });
+// ?debug exposes the camera so the scene can be inspected from the console
+if (/[?&]debug(&|$)/.test(location.search)) window.__drift = { camera, W, bhGroup, THREE,
+  place(p, t){ trans = null; tour = null; camera.position.copy(p); setAnglesFromDir(t.clone().sub(p).normalize()); vel.set(0, 0, 0); } };
+boot().catch(err => { console.error(err); fail('Could not build the scene: ' + (err && err.message ? err.message : err)); });
 </script>
+</body>
+</html>
